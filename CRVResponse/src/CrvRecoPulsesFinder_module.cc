@@ -8,6 +8,7 @@
 
 #include "Offline/CosmicRayShieldGeom/inc/CosmicRayShield.hh"
 #include "Offline/DataProducts/inc/CRSScintillatorBarIndex.hh"
+#include "Offline/CRVResponse/inc/CrvHelper.hh"
 
 #include "Offline/ConditionsService/inc/CrvParams.hh"
 #include "Offline/ConditionsService/inc/ConditionsHandle.hh"
@@ -18,6 +19,7 @@
 #include "Offline/RecoDataProducts/inc/CrvRecoPulse.hh"
 #include "Offline/RecoDataProducts/inc/CrvRecoPulseFlags.hh"
 #include "Offline/RecoDataProducts/inc/ProtonBunchTime.hh"
+#include "Offline/MCDataProducts/inc/ProtonBunchIntensity.hh"
 
 #include "art_root_io/TFileDirectory.h"
 #include "art_root_io/TFileService.h"
@@ -49,6 +51,8 @@ namespace mu2e
       using Name=fhicl::Name;
       using Comment=fhicl::Comment;
       fhicl::Atom<std::string> crvDigiModuleLabel{Name("crvDigiModuleLabel"), Comment("module label for CrvDigis")};
+
+
       fhicl::Atom<float> minADCdifference{Name("minADCdifference"), Comment("minimum ADC difference above pedestal to be considered for reconstruction")};  //5.0
       fhicl::Atom<float> defaultBeta{Name("defaultBeta"), Comment("initialization value for fit and default value for invalid fits (regular pulses: 19.0ns, dark counts for calibration: 12.0ns)")};
       fhicl::Atom<float> minBeta{Name("minBeta"), Comment("smallest accepted beta for valid fit [ns]")};  //5.0ns
@@ -61,6 +65,8 @@ namespace mu2e
       fhicl::Atom<float> doubleGumbelThreshold{Name("doubleGumbelThreshold"), Comment("Chi2/#ADCsamples (based on single Gumbel fit) at which a fit with two Gumbel functions should be attempted")};
       fhicl::Atom<float> minPEs{Name("minPEs"), Comment("minimum number of PEs")}; //0
       fhicl::Atom<art::InputTag> protonBunchTimeTag{ Name("protonBunchTimeTag"), Comment("ProtonBunchTime producer"),"EWMProducer" };
+      fhicl::Atom<art::InputTag> PBITag{Name("PBITag"), Comment("Tag for ProtonBunchIntensity object") ,"PBISim"};
+      //      fhicl::Atom<art::InputTag> PBITag{Name("PBITag"), Comment("Tag for ProtonBunchIntensity object") ,art::InputTag()};
     };
 
     typedef art::EDProducer::Table<Config> Parameters;
@@ -80,7 +86,7 @@ namespace mu2e
     float       _pedestal;           //100 ADC
     float       _calibrationFactor;  //394.6 ADC*ns/PE
     float       _calibrationFactorPulseHeight;  //11.4 ADC/PE
-    art::InputTag _protonBunchTimeTag;
+    art::InputTag _protonBunchTimeTag, _PBITag;
   };
 
 
@@ -88,7 +94,8 @@ namespace mu2e
     art::EDProducer(conf),
     _crvDigiModuleLabel(conf().crvDigiModuleLabel()),
     _minPEs(conf().minPEs()),
-    _protonBunchTimeTag(conf().protonBunchTimeTag())
+    _protonBunchTimeTag(conf().protonBunchTimeTag()),
+    _PBITag(conf().PBITag())
   {
     produces<CrvRecoPulseCollection>();
     _makeCrvRecoPulses=boost::shared_ptr<mu2eCrv::MakeCrvRecoPulses>(new mu2eCrv::MakeCrvRecoPulses(conf().minADCdifference(),
@@ -128,10 +135,17 @@ namespace mu2e
     event.getByLabel(_protonBunchTimeTag, protonBunchTime);
     double TDC0time = -protonBunchTime->pbtime_;
 
+    auto PBIhandle = event.getValidHandle<mu2e::ProtonBunchIntensity>(_PBITag);
+    auto PBI = *PBIhandle;
+    GeomHandle<CosmicRayShield> CRS;
+
     art::Handle<CrvDigiCollection> crvDigiCollection;
     event.getByLabel(_crvDigiModuleLabel,"",crvDigiCollection);
 
     size_t waveformIndex = 0;
+    std::cout <<"Subrun:" << event.subRun() << ", Event: " <<  event.event() << ", Nprotons: " <<  PBI.intensity() <<std::endl;
+    std::cout << "Number of SiPMs with reco pulses: " << crvDigiCollection->size() << std::endl;
+
     while(waveformIndex<crvDigiCollection->size())
     {
       const CrvDigi &digi = crvDigiCollection->at(waveformIndex);
@@ -156,6 +170,23 @@ namespace mu2e
       }
 
       _makeCrvRecoPulses->SetWaveform(ADCs, startTDC, _digitizationPeriod, _pedestal, _calibrationFactor, _calibrationFactorPulseHeight);
+
+
+      int sectorNumber, moduleNumber, layerNumber, barNumber;
+      CrvHelper::GetCrvCounterInfo(CRS, barIndex, sectorNumber, moduleNumber, layerNumber, barNumber);
+      CLHEP::Hep3Vector crvCounterPos=CrvHelper::GetCrvCounterPos(CRS, barIndex);
+
+      std::cout <<"SiPM ID: " << 4*barIndex.asInt()+SiPM << ", bar ID: " << barIndex << ", sector ID: " << sectorNumber
+                <<", pulseX: " << crvCounterPos[0] <<", pulseY: " << crvCounterPos[1] <<", pulseZ: " << crvCounterPos[2];
+      std::cout << std::endl;
+
+      std::cout << "ADC: ";
+      for(size_t i=0; i<CrvDigi::NSamples; i++) std::cout << digi.GetADCs()[i] << " ";
+      std::cout << std::endl;
+
+      std::cout << "TDC: ";
+      for(size_t i=0; i<CrvDigi::NSamples; i++) std::cout << (startTDC + i)*12.55 << " ";
+      std::cout << std::endl;
 
       size_t n = _makeCrvRecoPulses->GetPEs().size();
       for(size_t j=0; j<n; ++j)

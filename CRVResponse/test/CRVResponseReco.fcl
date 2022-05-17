@@ -30,12 +30,13 @@ physics :
     @table::CrvResponsePackage.producers
   }
 
-  an : [ @sequence::CrvRecoMCPackage.CrvRecoMCSequence]
+#  an : [ @sequence::CrvRecoMCPackage.CrvRecoMCSequence]
+  an : [ CrvRecoPulses]
   out: [Output]
 #  out: []
 
   trigger_paths: [an]
-  end_paths:     [out]
+  end_paths:     []
 }
 
 outputs: 
