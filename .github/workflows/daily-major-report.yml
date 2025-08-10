@@ -1,0 +1,44 @@
+name: Daily Major Issues Report
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # daily at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate report
+        id: gen
+        run: |
+          python3 scripts/major_issue_report.py > report.txt
+
+      - name: Read report into output
+        id: read
+        run: |
+          echo 'content<<EOF' >> $GITHUB_OUTPUT
+          cat report.txt >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: Daily major issues report
+          to: ${{ secrets.REPORT_TO }}
+          from: ${{ secrets.REPORT_FROM }}
+          secure: true
+          content_type: text/plain
+          body: ${{ steps.read.outputs.content }}
