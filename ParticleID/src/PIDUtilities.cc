@@ -440,12 +440,23 @@ namespace mu2e {
       } else if (x > xdisn[nx3]) {
         y = 1.;
       } else {
-        while(xdisn[ix3+1] <= x && ix3 < 2*nbn) {
+        // Fix: check bounds before accessing xdisn[ix3+1]
+        // xdisn has size 2+nb1+nb2, and nx3 is the last valid index
+        while(ix3+1 <= nx3 && xdisn[ix3+1] <= x) {
           ix3 = ix3 + 1;
         }
-        if (xdisn[ix3+1]-x > 1.1*dx2) { // Empty bin treatment
+        // Ensure ix3+1 is within bounds before accessing
+        if (ix3+1 > nx3) {
+          y = 1.;
+        } else if (xdisn[ix3+1]-x > 1.1*dx2) { // Empty bin treatment
           y = sigdisn[ix3+1]; //y = sigdisn[ix3+1];
-          if(idebug>=1) cout << "Empty bin treatment " << ix3+1 << " " << y << " " << sigdisn[ix3+2] << " " << sigdisn[ix3-1] << endl;
+          if(idebug>=1) {
+            // Fix: bounds check for debug output
+            cout << "Empty bin treatment " << ix3+1 << " " << y;
+            if (ix3+2 <= nx3) cout << " " << sigdisn[ix3+2];
+            if (ix3-1 >= 0) cout << " " << sigdisn[ix3-1];
+            cout << endl;
+          }
         }
         else if (xdisn[ix3+1] > xdisn[ix3]) { // Normal bins
           y = sigdisn[ix3] + (sigdisn[ix3+1]-sigdisn[ix3])
@@ -460,9 +471,15 @@ namespace mu2e {
       sigdisf[ix] = y;
       if (idebug >= 3) {
         cout << ix << ", ix3=" << ix3 << ", xdisn=" << xdisn[ix3] << ", x="
-             << x << ", next xdisn=" << xdisn[ix3+1] << endl;
-        cout << "   cdf n=" << sigdisn[ix3] << ", y=" << y << ", next point="
-             << sigdisn[ix3+1] << endl;
+             << x;
+        if (ix3+1 <= nx3) {
+          cout << ", next xdisn=" << xdisn[ix3+1] << endl;
+          cout << "   cdf n=" << sigdisn[ix3] << ", y=" << y << ", next point="
+               << sigdisn[ix3+1] << endl;
+        } else {
+          cout << ", next xdisn=OUT_OF_BOUNDS" << endl;
+          cout << "   cdf n=" << sigdisn[ix3] << ", y=" << y << ", next point=OUT_OF_BOUNDS" << endl;
+        }
       }
     }
 

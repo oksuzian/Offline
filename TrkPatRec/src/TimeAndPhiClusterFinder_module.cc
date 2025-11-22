@@ -288,9 +288,12 @@ namespace mu2e {
 
            const auto idx = q.front();
            if (idx+k/2 == i && timeHist[idx] >= minTimeYbin_) {
-               float sumBins = timeHist[idx]+timeHist[idx-1]+timeHist[idx+1];
-               float average = float(idx*timeHist[idx]+(idx-1)*timeHist[idx-1]+(idx+1)*timeHist[idx+1])/sumBins;
-               timePeaks.push_back(tmin + average*tbin_);
+               // Bounds check: ensure idx-1 >= 0 and idx+1 < size
+               if (idx > 0 && idx+1 < timeHist.size()) {
+                 float sumBins = timeHist[idx]+timeHist[idx-1]+timeHist[idx+1];
+                 float average = float(idx*timeHist[idx]+(idx-1)*timeHist[idx-1]+(idx+1)*timeHist[idx+1])/sumBins;
+                 timePeaks.push_back(tmin + average*tbin_);
+               }
            }
       }
       if (timePeaks.empty()) return;
