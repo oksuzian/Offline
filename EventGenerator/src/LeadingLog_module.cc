@@ -26,6 +26,7 @@
 
 #include "Offline/SeedService/inc/SeedService.hh"
 #include "Offline/GlobalConstantsService/inc/GlobalConstantsHandle.hh"
+#include "Offline/GlobalConstantsService/inc/ParticleDataList.hh"
 #include "Offline/GlobalConstantsService/inc/PhysicsParams.hh"
 #include "Offline/DataProducts/inc/PDGCode.hh"
 #include "Offline/MCDataProducts/inc/StageParticle.hh"
@@ -95,6 +96,7 @@ namespace mu2e {
   {
     produces<mu2e::StageParticleCollection>();
     pid_ = static_cast<PDGCode::type>(pdgId_);
+    _mass = GlobalConstantsHandle<ParticleDataList>()->particle(pid_).mass();
 
     if (pid_ == PDGCode::e_minus) {
       process_ = ProcessCode::mu2eCeMinusLeadingLog;
