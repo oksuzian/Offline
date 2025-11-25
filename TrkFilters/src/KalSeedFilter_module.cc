@@ -196,6 +196,12 @@ namespace mu2e
       std::cout << "KalSeedFilter: in checkKalSeed status "<< Ks.status() << std::endl;
     }
 
+    // Seeds with no segments cannot provide kinematic info; treat as failing the cuts
+    if(Ks.segments().empty()){
+      if(_debug > 2)std::cout << "KalSeedFilter: seed has no segments, skipping" << std::endl;
+      return false;
+    }
+
     if( Ks.status().hasAllProperties(Cuts._goods) ){
 
       // extract test quantities from the fit segment at t0
