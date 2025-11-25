@@ -378,6 +378,15 @@ namespace mu2e {
     std::set<StrawId> oldstrawxs;
     for(auto const& strawhit : kktrk.strawHits())oldhits.insert(strawhit->strawHitIndex());
     for(auto const& strawx : kktrk.strawXings())oldstrawxs.insert(strawx->strawId());
+    auto findExistingXing = [&](StrawId const& sid) -> KKSTRAWXINGPTR {
+      for(auto const& sx : kktrk.strawXings()){
+        if(sx->strawId() == sid)return sx;
+      }
+      for(auto const& sx : addexings){
+        if(sx->strawId() == sid)return sx;
+      }
+      return KKSTRAWXINGPTR();
+    };
     for( size_t ich=0; ich < chcol.size();++ich){
       if(oldhits.find(ich)==oldhits.end()){      // make sure this hit wasn't already found
         ComboHit const& strawhit = chcol[ich];
@@ -396,12 +405,20 @@ namespace mu2e {
               oldhits.insert(addhits.back()->strawHitIndex());
               // add the associated straw
               if(matcorr_){
-                // test
-                if(oldstrawxs.find(strawhit.strawId()) != oldstrawxs.end())throw cet::exception("RECO")<<"mu2e::addStrawHits: duplicate straw!!" <<  std::endl;
                 auto sline = Mu2eKinKal::strawLine(straw,pca.particleToca()); // line down the straw axis center
                 CAHint hint(pca.particleToca(),pca.sensorToca());
                 PCA spca(ptraj, sline, hint, tprec_ );
-                addexings.push_back(std::make_shared<KKSTRAWXING>(addhits.back(),spca.localClosestApproach(),smat,straw));
+                auto localca = spca.localClosestApproach();
+                auto const& sid = strawhit.strawId();
+                if(oldstrawxs.find(sid) != oldstrawxs.end()){
+                  auto existing = findExistingXing(sid);
+                  if(existing){
+                    existing->updateFromHit(addhits.back(),localca);
+                  }
+                } else {
+                  addexings.push_back(std::make_shared<KKSTRAWXING>(addhits.back(),localca,smat,straw));
+                  oldstrawxs.insert(sid);
+                }
               }
             }
           }

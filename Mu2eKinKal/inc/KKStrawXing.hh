@@ -85,6 +85,7 @@ namespace mu2e {
       auto const& straw() const { return straw_; }
       auto const& strawId() const { return straw_.id(); }
       auto const& strawHitPtr() const { return shptr_; }
+      void updateFromHit(KKSTRAWHITPTR const& strawhit, CA const& ca);
     private:
       StrawXingUpdater sxconfig_; // cache of most recent update
       KKSTRAWHITPTR shptr_; // reference to associated StrawHit
@@ -127,6 +128,12 @@ namespace mu2e {
   template <class KTRAJ> bool KKStrawXing<KTRAJ>::active() const {
     // if the associated hit is active, use it's state. Otherwise use the intrinsic state
     return active_ || (shptr_ && shptr_->hitState().active());
+  }
+
+  template <class KTRAJ> void KKStrawXing<KTRAJ>::updateFromHit(KKSTRAWHITPTR const& strawhit, CA const& ca){
+    shptr_ = strawhit;
+    axis_ = ca.sensorTraj();
+    ca_ = CA(ca);
   }
 
   template <class KTRAJ> void KKStrawXing<KTRAJ>::updateReference(PTRAJ const& ptraj) {
