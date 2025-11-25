@@ -26,6 +26,7 @@
 
 #include "Offline/SeedService/inc/SeedService.hh"
 #include "Offline/GlobalConstantsService/inc/GlobalConstantsHandle.hh"
+#include "Offline/GlobalConstantsService/inc/ParticleDataList.hh"
 #include "Offline/GlobalConstantsService/inc/PhysicsParams.hh"
 #include "Offline/DataProducts/inc/PDGCode.hh"
 #include "Offline/MCDataProducts/inc/StageParticle.hh"
@@ -91,6 +92,7 @@ namespace mu2e {
     , randExp_{eng_}
     , pdgId_(conf().pdgId())
     , spectrum_(BinnedSpectrum(conf().spectrum.get<fhicl::ParameterSet>()))
+    , _mass(GlobalConstantsHandle<ParticleDataList>()->particle(static_cast<PDGCode::type>(conf().pdgId())).mass())
 
   {
     produces<mu2e::StageParticleCollection>();
