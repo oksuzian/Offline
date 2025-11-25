@@ -196,6 +196,12 @@ namespace mu2e
       std::cout << "KalSeedFilter: in checkKalSeed status "<< Ks.status() << std::endl;
     }
 
+    // Check if KalSeed has segments before proceeding
+    if(Ks.segments().size() == 0) {
+      if(_debug > 2)std::cout << "KalSeedFilter: no segments" << std::endl;
+      return false;
+    }
+
     if( Ks.status().hasAllProperties(Cuts._goods) ){
 
       // extract test quantities from the fit segment at t0
