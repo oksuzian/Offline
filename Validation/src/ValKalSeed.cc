@@ -127,6 +127,9 @@ namespace mu2e {
           vdid = VirtualDetectorId::TT_FrontHollow;
       }
       //
+      // Skip KalSeeds with no segments
+      if(ks.segments().size() == 0) continue;
+      
       double t0;
       auto t0seg = ks.t0Segment(t0);
       double t0var = ks.t0Var();

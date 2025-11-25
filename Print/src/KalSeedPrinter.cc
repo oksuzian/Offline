@@ -62,8 +62,10 @@ void mu2e::KalSeedPrinter::Print(const mu2e::KalSeed& obj, int ind,
 
   os << std::setiosflags(std::ios::fixed | std::ios::right);
   if (ind >= 0 && verbose() == 1) os << std::setw(4) << ind;
+  
+  // Handle KalSeeds with no segments
   double t0;
-  auto seg = obj.t0Segment(t0);
+  auto seg = (obj.segments().size() > 0) ? obj.t0Segment(t0) : obj.segments().end();
 
   if (verbose() >= 1) {
     std::string fittype("Unknown");
