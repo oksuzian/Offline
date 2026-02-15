@@ -260,6 +260,7 @@ namespace mu2e {
                                               TimePhiCandidateCollection& timeCandidates)
   {
       // Select good hits and sort them by time
+      if(chcol.empty()) return;
       std::vector<unsigned> chGood;
       chGood.reserve(chcol.size());
       for (size_t ich=0; ich<chcol.size();++ich){
@@ -267,8 +268,7 @@ namespace mu2e {
       }
       auto sortFcn = [&chcol](unsigned i1, unsigned i2){return chcol[i1].correctedTime() < chcol[i2].correctedTime();};
       sort(chGood.begin(),chGood.end(),sortFcn);
-
-
+      if(chGood.empty()) return;
       // Fill the time histogram with hit corrected times (add buffer to hist boundaries). Add calo hits if requested
       float tmax     = chcol[chGood.back()].correctedTime() + 4*maxTimeDT_;
       float tmin     = std::max(0.0f, chcol[chGood.front()].correctedTime() - 4*maxTimeDT_);
