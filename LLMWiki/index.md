@@ -1,0 +1,125 @@
+# LLMWiki Index
+
+Folder pages grouped by subsystem. See [README](README.md) for the schema.
+
+## CRV (Cosmic Ray Veto)
+- [CosmicRayShieldGeom](CosmicRayShieldGeom.md)
+- [CRVConditions](CRVConditions.md)
+- [CRVConfig](CRVConfig.md)
+- [CRVFilters](CRVFilters.md)
+- [CRVReco](CRVReco.md)
+- [CRVResponse](CRVResponse.md)
+- [CRVTools](CRVTools.md)
+
+## Calorimeter
+- [CaloCluster](CaloCluster.md)
+- [CaloConditions](CaloConditions.md)
+- [CaloConfig](CaloConfig.md)
+- [CaloDiag](CaloDiag.md)
+- [CaloFilters](CaloFilters.md)
+- [CaloMC](CaloMC.md)
+- [CaloReco](CaloReco.md)
+- [CalorimeterGeom](CalorimeterGeom.md)
+- [CaloVisualizer](CaloVisualizer.md)
+- [CalPatRec](CalPatRec.md)
+
+## Tracking
+- [BTrkLegacy](BTrkLegacy.md)
+- [CosmicReco](CosmicReco.md)
+- [KalmanTests](KalmanTests.md)
+- [KinKalGeom](KinKalGeom.md)
+- [Mu2eKinKal](Mu2eKinKal.md)
+- [TrackerConditions](TrackerConditions.md)
+- [TrackerConfig](TrackerConfig.md)
+- [TrackerGeom](TrackerGeom.md)
+- [TrackerMC](TrackerMC.md)
+- [TrkFilters](TrkFilters.md)
+- [TrkHitReco](TrkHitReco.md)
+- [TrkPatRec](TrkPatRec.md)
+- [TrkReco](TrkReco.md)
+
+## STM + DAQ
+- [STMConditions](STMConditions.md)
+- [STMConfig](STMConfig.md)
+- [STMGeom](STMGeom.md)
+- [STMMC](STMMC.md)
+- [STMReco](STMReco.md)
+- [DAQ](DAQ.md)
+- [DAQConditions](DAQConditions.md)
+- [DAQConfig](DAQConfig.md)
+
+## Beamline / Production Geometry
+- [BeamlineGeom](BeamlineGeom.md)
+- [BFieldGeom](BFieldGeom.md)
+- [BFieldTest](BFieldTest.md)
+- [ExtinctionMonitorFNAL](ExtinctionMonitorFNAL.md)
+- [ProductionSolenoidGeom](ProductionSolenoidGeom.md)
+- [ProductionTargetGeom](ProductionTargetGeom.md)
+- [ProtonBeamDumpGeom](ProtonBeamDumpGeom.md)
+- [PTMGeom](PTMGeom.md)
+
+## Detector-Region Geometry
+- [DetectorSolenoidGeom](DetectorSolenoidGeom.md)
+- [ExternalShieldingGeom](ExternalShieldingGeom.md)
+- [GeomPrimitives](GeomPrimitives.md)
+- [MBSGeom](MBSGeom.md)
+- [MECOStyleProtonAbsorberGeom](MECOStyleProtonAbsorberGeom.md)
+- [Mu2eHallGeom](Mu2eHallGeom.md)
+- [ServicesGeom](ServicesGeom.md)
+- [StoppingTargetGeom](StoppingTargetGeom.md)
+
+## G4 / Simulation core
+- [CommonMC](CommonMC.md)
+- [EventGenerator](EventGenerator.md)
+- [EventMixing](EventMixing.md)
+- [Mu2e](Mu2e.md)
+- [Mu2eG4](Mu2eG4.md)
+- [Mu2eG4Helper](Mu2eG4Helper.md)
+- [Mu2eInterfaces](Mu2eInterfaces.md)
+- [Mu2eReco](Mu2eReco.md)
+
+## DB / Services / Conditions
+- [AnalysisConditions](AnalysisConditions.md)
+- [DbService](DbService.md)
+- [DbTables](DbTables.md)
+- [GeometryService](GeometryService.md)
+- [GlobalConstantsService](GlobalConstantsService.md)
+- [ProditionsService](ProditionsService.md)
+- [SeedService](SeedService.md)
+- [SimulationConditions](SimulationConditions.md)
+- [SimulationConfig](SimulationConfig.md)
+- [TimeoutService](TimeoutService.md)
+
+## Data Products & Reco Common
+- [CommonReco](CommonReco.md)
+- [Compression](Compression.md)
+- [DataProducts](DataProducts.md)
+- [Filters](Filters.md)
+- [MCDataProducts](MCDataProducts.md)
+- [RecoDataProducts](RecoDataProducts.md)
+
+## Analysis / Trigger / Validation / Misc
+- [Analyses](Analyses.md)
+- [AnalysisConfig](AnalysisConfig.md)
+- [AnalysisUtilities](AnalysisUtilities.md)
+- [Blinding](Blinding.md)
+- [EventDisplay](EventDisplay.md)
+- [HelloWorld](HelloWorld.md)
+- [Lumi](Lumi.md)
+- [ParticleID](ParticleID.md)
+- [Sources](Sources.md)
+- [TestTools](TestTools.md)
+- [Trigger](Trigger.md)
+- [UtilityModules](UtilityModules.md)
+- [Validation](Validation.md)
+
+## Build / Utilities / Scripts
+- [bin](bin.md)
+- [boost_fix](boost_fix.md)
+- [ConfigTools](ConfigTools.md)
+- [fcl](fcl.md)
+- [GeneralUtilities](GeneralUtilities.md)
+- [Mu2eUtilities](Mu2eUtilities.md)
+- [Print](Print.md)
+- [scripts](scripts.md)
+- [ups](ups.md)
